@@ -1,0 +1,69 @@
+# ============================================================
+# WordPress headless API backend
+# Prinsip: hanya kode buatan sendiri yang masuk git.
+# Core, plugin pihak ketiga, media, dan rahasia tidak ikut.
+# ============================================================
+
+# ---------- RAHASIA — jangan pernah di-commit ----------
+wp-config.php
+wp-config.php.bak
+.env
+.env.*
+*.bak
+*.pem
+*.key
+*.p12
+.rnd
+.htpasswd
+
+# ---------- Log & debug ----------
+*.log
+wp-content/debug.log
+
+# ---------- Media & data pembeli ----------
+wp-content/uploads/
+
+# ---------- Cache, backup, berkas sementara ----------
+wp-content/cache/
+wp-content/upgrade/
+wp-content/upgrade-temp-backup/
+wp-content/backup*/
+wp-content/jetpack-waf/
+wp-content/wflogs/
+wp-content/ai1wm-backups/
+*.sql
+*.sql.gz
+*.zip
+*.tar.gz
+
+# ---------- WordPress core ----------
+# Di-download ulang di server. Versinya diatur lewat wp-admin,
+# bukan lewat git, jadi menyimpannya hanya bikin diff berisik.
+/wp-admin/
+/wp-includes/
+/index.php
+/license.txt
+/readme.html
+/xmlrpc.php
+/wp-*.php
+!/wp-config-sample.php
+
+# ---------- Plugin & tema pihak ketiga ----------
+# Install lewat wp-admin di server tujuan.
+wp-content/plugins/*
+wp-content/themes/*
+wp-content/languages/
+wp-content/index.php
+
+# ---------- Yang TETAP dilacak ----------
+!wp-content/plugins/index.php
+!wp-content/themes/index.php
+!wp-content/mu-plugins/
+!wp-content/plugins/custom-*/
+!wp-content/themes/custom-*/
+
+# ---------- OS & editor ----------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
