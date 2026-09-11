@@ -179,6 +179,10 @@ require '/path/ke/wp-load.php';
 WordPress tidak bisa dijalankan di Vercel — butuh PHP, MySQL, dan filesystem
 persisten untuk `wp-content/uploads`. Hanya frontend yang ke Vercel.
 
+> **Panduan langkah demi langkah, termasuk memasang Hermes Agent di VPS yang
+> sama:** [`docs/deploy-vps-hermes.md`](docs/deploy-vps-hermes.md).
+> Skrip uji endpoint MCP: [`docs/verifikasi-mcp.sh`](docs/verifikasi-mcp.sh).
+
 ```
 Pembeli ──► Next.js @ Vercel ──GraphQL──► WordPress @ VPS
 ```
@@ -217,6 +221,72 @@ WORDPRESS_API_URL=https://IP_VPS/graphql
 `NEXT_PUBLIC_WORDPRESS_URL` **wajib ada saat build** — `next.config.ts`
 memakainya untuk `images.remotePatterns`. Kalau kosong, build tetap sukses tapi
 semua gambar produk gagal tampil.
+
+---
+
+## MCP untuk agent AI
+
+Selain GraphQL untuk pembeli, WordPress ini juga jadi **MCP server** supaya agent
+(Hermes Agent, Claude Code, dsb.) bisa mengurus toko dari sisi admin. MCP
+**melengkapi**, bukan mengganti, WPGraphQL — GraphQL tetap yang melayani
+storefront.
+
+```
+Pembeli ──► Next.js ──GraphQL──► WordPress ◄──MCP── Hermes Agent
+```
+
+| Komponen | Peran |
+|---|---|
+| Abilities API | Sudah ada di core sejak WP 6.9 |
+| `mcp-adapter` (v0.6.1, plugin) | Menerjemahkan ability jadi MCP tool |
+| `wp-content/mu-plugins/headless-mcp-abilities.php` | **Kode sendiri, masuk git.** Mendefinisikan tool WooCommerce |
+
+Endpoint: `POST /wp-json/mcp/mcp-adapter-default-server`
+Auth: REST standar — **Application Password** dengan Basic auth.
+
+### Tool yang tersedia
+
+| Tool | Jenis | Fungsi |
+|---|---|---|
+| `woo/list-orders` | baca | Daftar pesanan, bisa disaring per status |
+| `woo/get-order` | baca | Detail satu pesanan |
+| `woo/complete-order` | **tulis** | Tandai pesanan `completed`. Hanya dari `processing`/`on-hold`. Meninggalkan order note di wp-admin |
+| `woo/create-product` | **tulis** | Buat produk sederhana baru (nama, harga, deskripsi, stok, gambar dari URL) |
+
+Semua tool butuh capability `manage_woocommerce`. Role **Shop Manager** cukup;
+tidak perlu Administrator.
+
+### Setup
+
+1. Install `mcp-adapter` dari release zip resmi
+   (`github.com/WordPress/mcp-adapter/releases`), aktifkan.
+2. Buat user khusus, mis. `hermes-bot`, role Shop Manager.
+3. **Users → Profile → Application Passwords** → buat satu, catat nilainya.
+4. Auth header = `Basic base64("hermes-bot:<app-password>")`.
+
+Kalau ingin menambah tool: daftarkan ability baru di file mu-plugin di atas
+dan tambahkan namanya ke `HEADLESS_MCP_ABILITIES`. Ability **privat secara
+default** — wajib `meta.public => true` agar terlihat oleh MCP.
+
+### Menyambungkan Hermes Agent
+
+`~/.hermes/config.yaml`:
+
+```yaml
+mcp_servers:
+  woocommerce:
+    url: "https://HOST/wp-json/mcp/mcp-adapter-default-server"
+    headers:
+      Authorization: "${WP_MCP_AUTH}"
+```
+
+`${WP_MCP_AUTH}` diambil dari env var — jangan tulis kredensial mentah di YAML.
+
+> **Development lokal dengan Herd:** Hermes berbasis Python dan tidak mempercayai
+> CA lokal Herd. Buat bundle gabungan (CA publik + `LaravelValetCASelfSigned.crt`)
+> dan arahkan `SSL_CERT_FILE` ke sana. Harus gabungan — kalau hanya CA Herd,
+> Hermes justru tidak bisa menghubungi penyedia LLM-nya. Di server dengan
+> sertifikat asli, langkah ini tidak perlu.
 
 ---
 
