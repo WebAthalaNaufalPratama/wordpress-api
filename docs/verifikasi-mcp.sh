@@ -20,17 +20,17 @@ S=(-H "Mcp-Session-Id: $SID")
 
 curl -s -o /dev/null -X POST "$URL" "${H[@]}" "${S[@]}" -d '{"jsonrpc":"2.0","method":"notifications/initialized"}'
 
-echo; echo "=== 2. tools/list -> cari woo/* ==="
+echo; echo "=== 2. tools/list -> cari woo-* ==="
 curl -s -X POST "$URL" "${H[@]}" "${S[@]}" -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' \
   | grep -oE '"name":"[^"]+"' | sort -u
 
-echo; echo "=== 3. tools/call woo/list-orders (processing, 3) ==="
+echo; echo "=== 3. tools/call woo-list-orders (processing, 3) ==="
 curl -s -X POST "$URL" "${H[@]}" "${S[@]}" \
-  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"woo/list-orders","arguments":{"status":"processing","limit":3}}}' \
+  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"woo-list-orders","arguments":{"status":"processing","limit":3}}}' \
   | head -c 1200; echo
 
-echo; echo "=== 4. tools/call woo/complete-order pada order yang TIDAK boleh (id 1) -> harus error ==="
+echo; echo "=== 4. tools/call woo-complete-order pada order yang TIDAK boleh (id 1) -> harus error ==="
 curl -s -X POST "$URL" "${H[@]}" "${S[@]}" \
-  -d '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"woo/complete-order","arguments":{"order_id":1}}}' \
+  -d '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"woo-complete-order","arguments":{"order_id":1}}}' \
   | head -c 600; echo
 rm -f "$HDR"

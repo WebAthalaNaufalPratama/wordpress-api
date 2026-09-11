@@ -248,10 +248,14 @@ Auth: REST standar — **Application Password** dengan Basic auth.
 
 | Tool | Jenis | Fungsi |
 |---|---|---|
-| `woo/list-orders` | baca | Daftar pesanan, bisa disaring per status |
-| `woo/get-order` | baca | Detail satu pesanan |
-| `woo/complete-order` | **tulis** | Tandai pesanan `completed`. Hanya dari `processing`/`on-hold`. Meninggalkan order note di wp-admin |
-| `woo/create-product` | **tulis** | Buat produk sederhana baru (nama, harga, deskripsi, stok, gambar dari URL) |
+| `woo-list-orders` | baca | Daftar pesanan, bisa disaring per status |
+| `woo-get-order` | baca | Detail satu pesanan |
+| `woo-complete-order` | **tulis** | Tandai pesanan `completed`. Hanya dari `processing`/`on-hold`. Meninggalkan order note di wp-admin |
+| `woo-create-product` | **tulis** | Buat produk sederhana baru (nama, harga, deskripsi, stok, gambar dari URL) |
+
+> Nama ability di PHP memakai garis miring (`woo/list-orders`), tapi MCP
+> Adapter mengubahnya jadi strip saat diekspos sebagai tool
+> (`woo-list-orders`). Di Hermes dan di `tools/call`, pakai bentuk **strip**.
 
 Semua tool butuh capability `manage_woocommerce`. Role **Shop Manager** cukup;
 tidak perlu Administrator.

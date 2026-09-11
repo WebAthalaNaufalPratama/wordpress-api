@@ -304,7 +304,7 @@ bash verifikasi-mcp.sh     # skrip ada di repo, folder docs/
 ```
 
 Yang harus terlihat: `HTTP 401` tanpa auth, lalu `tools/list` memuat
-`woo/list-orders`, `woo/get-order`, `woo/complete-order`, `woo/create-product`.
+`woo-list-orders`, `woo-get-order`, `woo-complete-order`, `woo-create-product`.
 
 ---
 
@@ -369,7 +369,7 @@ hermes gateway status
 ```
 
 Sekarang chat ke bot-mu: *"ada pesanan baru?"* → Hermes memanggil
-`woo/list-orders`.
+`woo-list-orders`.
 
 > Gateway **menolak semua orang** yang tidak ada di allowlist. Jangan kosongkan
 > `TELEGRAM_ALLOWED_USERS` — bot ini bisa mengubah status pesanan sungguhan.
@@ -383,7 +383,7 @@ masing-masing dipanggil sebagai slash command dari Telegram/Discord:
 
 | Perintah di chat | Skill | Alat yang dipakai |
 |---|---|---|
-| `/produk tambah kaos hitam 95rb stok 20` | `produk` | MCP tool `woo/create-product` |
+| `/produk tambah kaos hitam 95rb stok 20` | `produk` | MCP tool `woo-create-product` |
 | `/perbaiki-kode tombol cart tidak update` | `perbaiki-kode` | `terminal` + `git` + `gh` → **Pull Request** |
 
 Keduanya sudah ada di repo: `docs/hermes-skills/produk/SKILL.md` dan
@@ -391,7 +391,7 @@ Keduanya sudah ada di repo: `docs/hermes-skills/produk/SKILL.md` dan
 
 ### 8a. Skill produk
 
-Tool `woo/create-product` sudah ada di `headless-mcp-abilities.php` (langkah
+Tool `woo-create-product` sudah ada di `headless-mcp-abilities.php` (langkah
 4). Tinggal salin skill-nya, sebagai user `hermes`:
 
 ```bash
@@ -477,7 +477,7 @@ Dan di `package.json`, hapus `--use-system-ca` dari `build` dan `start`.
 |---|---|
 | Endpoint MCP balas 404 | mcp-adapter belum aktif, atau permalink masih "Plain" — set ke *Post name* |
 | 401 padahal auth benar | Application Password ditolak karena `is_ssl()` false — pastikan akses lewat `https://`, bukan `http://` |
-| `tools/list` tidak memuat `woo/*` | mu-plugin belum tersalin, atau WooCommerce belum aktif (ability hanya didaftarkan kalau `wc_get_orders` ada) |
+| `tools/list` tidak memuat `woo-*` | mu-plugin belum tersalin, atau WooCommerce belum aktif (ability hanya didaftarkan kalau `wc_get_orders` ada) |
 | Hermes: `SSL: CERTIFICATE_VERIFY_FAILED` | Sertifikat kedaluwarsa (6 hari!) — `sudo certbot certificates` |
 | Sertifikat tidak diperbarui | Port 80 tertutup di ufw, atau blok `acme-challenge` hilang dari nginx |
 | Gambar produk tidak tampil di Vercel | `NEXT_PUBLIC_WORDPRESS_URL` tidak ada saat build |
@@ -494,10 +494,14 @@ mendaftarkan ability dan menambahkan namanya ke `HEADLESS_MCP_ABILITIES`.
 
 | Tool | Jenis | Fungsi |
 |---|---|---|
-| `woo/list-orders` | baca | Daftar pesanan, bisa disaring per status |
-| `woo/get-order` | baca | Detail satu pesanan beserta item |
-| `woo/complete-order` | **tulis** | Tandai `completed`. Hanya dari `processing`/`on-hold`. Meninggalkan order note |
-| `woo/create-product` | **tulis** | Produk sederhana baru: nama, harga, deskripsi, SKU, stok, gambar dari URL |
+| `woo-list-orders` | baca | Daftar pesanan, bisa disaring per status |
+| `woo-get-order` | baca | Detail satu pesanan beserta item |
+| `woo-complete-order` | **tulis** | Tandai `completed`. Hanya dari `processing`/`on-hold`. Meninggalkan order note |
+| `woo-create-product` | **tulis** | Produk sederhana baru: nama, harga, deskripsi, SKU, stok, gambar dari URL |
+
+> Nama ability di PHP memakai garis miring (`woo/list-orders`), tapi MCP
+> Adapter mengubahnya jadi strip saat diekspos sebagai tool
+> (`woo-list-orders`). Di Hermes dan di `tools/call`, pakai bentuk **strip**.
 
 ---
 
