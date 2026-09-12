@@ -409,11 +409,11 @@ hanya boleh membuka PR, tidak pernah push ke `main`.
 
 **Di GitHub**, buat token untuk Hermes:
 Settings → Developer settings → Fine-grained tokens → *Generate new token*
-- Repository access: **Only select** → `my-headless-store`, `wordpress-api`
+- Repository access: **Only select** → `frontend-next`, `wordpress-api`
 - Permissions: Contents **Read and write**, Pull requests **Read and write**,
   Metadata **Read**. Tidak lebih.
 
-**Di repo GitHub `my-headless-store`**, Settings → Branches → *Add rule* untuk
+**Di repo GitHub `frontend-next`**, Settings → Branches → *Add rule* untuk
 `main`: centang *Require a pull request before merging*. Ini pagar terakhir
 kalau skill-nya salah — token Hermes tetap tidak bisa menulis ke `main`.
 
@@ -431,9 +431,9 @@ git config --global user.name  "Hermes Agent"
 git config --global user.email "hermes-bot@users.noreply.github.com"
 
 mkdir -p ~/repos && cd ~/repos
-gh repo clone <username>/my-headless-store
+gh repo clone <username>/frontend-next
 gh repo clone <username>/wordpress-api
-cd my-headless-store && npm ci               # supaya lint/build bisa jalan
+cd frontend-next && npm ci               # supaya lint/build bisa jalan
 
 # skill
 cp -r /srv/wordpress-api/docs/hermes-skills/perbaiki-kode ~/.hermes/skills/

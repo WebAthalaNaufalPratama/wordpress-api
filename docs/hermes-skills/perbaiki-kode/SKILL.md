@@ -1,6 +1,6 @@
 ---
 name: perbaiki-kode
-description: Memperbaiki bug atau menambah fitur di repo GitHub my-headless-store (Next.js) atau wordpress-api, lalu membuka Pull Request. Dipakai saat pengguna minta "perbaiki", "tambahkan fitur", "ubah tampilan", "ada bug di ...".
+description: Memperbaiki bug atau menambah fitur di repo GitHub frontend-next (storefront Next.js) atau wordpress-api, lalu membuka Pull Request. Dipakai saat pengguna minta "perbaiki", "tambahkan fitur", "ubah tampilan", "ada bug di ...".
 version: 1.0.0
 ---
 # Memperbaiki kode lewat Pull Request
@@ -10,7 +10,7 @@ Pengguna minta perubahan kode. Hasil akhirnya **selalu Pull Request**, tidak
 pernah push langsung ke `main`. Pengguna yang me-merge, bukan agent.
 
 ## Repo
-- Storefront Next.js: `~/repos/my-headless-store` (remote `origin`)
+- Storefront Next.js: `~/repos/frontend-next` (GitHub `frontend-next`; nama paketnya `my-headless-store`)
 - Backend WordPress: `~/repos/wordpress-api` — hanya `wp-content/mu-plugins/`
   dan `docs/` yang berisi kode; sisanya tidak ada di git.
 
